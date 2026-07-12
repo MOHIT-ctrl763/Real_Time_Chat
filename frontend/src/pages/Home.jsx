@@ -1,19 +1,16 @@
-import React from 'react'
-import SideBar from '../components/SideBar'
-import MessageArea from '../components/MessageArea'
-import { useSelector } from 'react-redux'
-import getMessage from '../customHooks/getMessages'
-
+import GetCurrentUser from "../hooks/getCurrentUser";
+import GetOtherUsers from "../hooks/getOtherUsers";
 
 function Home() {
-  let {selectedUser}=useSelector(state=>state.user)
- getMessage()
+
+  GetCurrentUser();
+  GetOtherUsers();
+
   return (
-    <div className='w-full h-[100vh] flex  '>
-     <SideBar/>
-     <MessageArea/>
-    </div>
-  )
+    <>
+      {/* Your Home UI */}
+    </>
+  );
 }
 
-export default Home
+export default Home;
