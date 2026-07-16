@@ -4,6 +4,9 @@ import bcrypt from "bcryptjs";
 export const signUp = async (req, res) => {
   try {
     const { userName, email, password } = req.body;
+    if (!userName?.trim() || !email?.trim() || !password) {
+      return res.status(400).json({ message: "username, email and password are required" });
+    }
     const checkUserByUserName = await User.findOne({ userName });
     if (checkUserByUserName) {
       return res.status(400).json({ message: "userName already exist" });
@@ -31,11 +34,13 @@ export const signUp = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "Strict",
-      secure: false,
+      sameSite: "None",
+      secure: true,
     });
 
-    return res.status(201).json(user);
+    const safeUser = user.toObject();
+    delete safeUser.password;
+    return res.status(201).json(safeUser);
   } catch (error) {
     return res.status(500).json({ message: `signup error ${error}` });
   }
@@ -43,6 +48,9 @@ export const signUp = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!email?.trim() || !password) {
+      return res.status(400).json({ message: "email and password are required" });
+    }
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "user does not exist" });
@@ -62,7 +70,9 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json(user);
+    const safeUser = user.toObject();
+    delete safeUser.password;
+    return res.status(200).json(safeUser);
   } catch (error) {
     return res.status(500).json({ message: `login error ${error}` });
   }

@@ -7,7 +7,11 @@ export const sendMessage=async (req,res)=>{
     try {
         let sender=req.userId
         let {receiver}=req.params
-        let {message}=req.body
+        let {message = ""}=req.body
+
+        if (!message.trim() && !req.file) {
+            return res.status(400).json({message:"message or image is required"})
+        }
 
         let image;
         if(req.file){
@@ -19,7 +23,7 @@ export const sendMessage=async (req,res)=>{
         })
 
         let newMessage=await Message.create({
-            sender,receiver,message,image
+            sender,receiver,message: message.trim(),image
         })
 
         if(!conversation){

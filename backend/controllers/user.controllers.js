@@ -21,10 +21,9 @@ export const editProfile=async (req,res)=>{
         if(req.file){
             image=await uploadOnCloudinary(req.file.path)
         }
-        let user=await User.findByIdAndUpdate(req.userId,{
-           name,
-           image 
-        },{new:true})
+        const updates = { name: name?.trim() }
+        if (image) updates.image = image
+        let user=await User.findByIdAndUpdate(req.userId, updates, {new:true}).select("-password")
 
         if(!user){
             return res.status(400).json({message:"user not found"})
@@ -54,11 +53,12 @@ export const search =async (req,res)=>{
             return res.status(400).json({message:"query is required"})
         }
         let users=await User.find({
+            _id: { $ne: req.userId },
             $or:[
                 {name:{$regex:query,$options:"i"}},
                 {userName:{$regex:query,$options:"i"}},
             ]
-        })
+        }).select("-password")
         return res.status(200).json(users)
     } catch (error) {
         return res.status(500).json({message:`search users error ${error}`})
