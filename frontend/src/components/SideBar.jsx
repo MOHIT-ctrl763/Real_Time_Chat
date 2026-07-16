@@ -6,6 +6,7 @@ import { serverUrl } from '../main'
 import axios from 'axios'
 import { setOtherUsers, setSearchData, setSelectedUser, setUserData } from '../redux/userSlice'
 import { useNavigate } from 'react-router-dom'
+import { clearAuthToken } from '../authToken'
 
 function Avatar({ user, online, size = 'md' }) {
   const dimensions = size === 'lg' ? 'h-12 w-12' : 'h-11 w-11'
@@ -52,6 +53,7 @@ function SideBar() {
       dispatch(setSelectedUser(null))
       dispatch(setUserData(null))
       dispatch(setOtherUsers([]))
+      clearAuthToken()
       navigate('/login')
     } catch (error) {
       console.error('Unable to log out', error)

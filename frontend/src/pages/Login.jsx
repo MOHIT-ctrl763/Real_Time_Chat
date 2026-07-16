@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { serverUrl } from '../main'
 import { useDispatch } from 'react-redux'
 import { setSelectedUser, setUserData } from '../redux/userSlice'
+import { setAuthToken } from '../authToken'
 
 function Login() {
     let navigate = useNavigate()
@@ -21,7 +22,8 @@ function Login() {
             let result = await axios.post(`${serverUrl}/api/auth/login`, {
                 email, password
             }, { withCredentials: true })
-            dispatch(setUserData(result.data))
+            setAuthToken(result.data.token)
+            dispatch(setUserData(result.data.user))
             dispatch(setSelectedUser(null))
             navigate("/")
             setEmail("")
@@ -31,7 +33,7 @@ function Login() {
         } catch (error) {
             console.log(error)
             setLoading(false)
-            setErr(error.response.data.message)
+            setErr(error.response?.data?.message || 'Unable to log in. Please try again.')
         }
     }
 

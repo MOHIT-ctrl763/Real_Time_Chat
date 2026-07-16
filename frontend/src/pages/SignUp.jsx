@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { serverUrl } from '../main'
 import { useDispatch } from 'react-redux'
 import { setUserData } from '../redux/userSlice'
+import { setAuthToken } from '../authToken'
 
 function SignUp() {
   const navigate = useNavigate()
@@ -20,7 +21,8 @@ function SignUp() {
     setError('')
     try {
       const result = await axios.post(`${serverUrl}/api/auth/signup`, form, { withCredentials: true })
-      dispatch(setUserData(result.data))
+      setAuthToken(result.data.token)
+      dispatch(setUserData(result.data.user))
       navigate('/profile')
     } catch (requestError) {
       setError(requestError.response?.data?.message || 'Unable to create your account. Please try again.')

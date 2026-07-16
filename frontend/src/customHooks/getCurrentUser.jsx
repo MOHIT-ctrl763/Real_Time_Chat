@@ -3,6 +3,7 @@ import { useEffect } from "react"
 import { serverUrl } from "../main"
 import { useDispatch } from "react-redux"
 import { setUserData } from "../redux/userSlice"
+import { clearAuthToken } from '../authToken'
 
 const useCurrentUser=()=>{
     const dispatch=useDispatch()
@@ -11,8 +12,12 @@ const useCurrentUser=()=>{
             try {
                 let result=await axios.get(`${serverUrl}/api/user/current`,{withCredentials:true})
                 dispatch(setUserData(result.data))
-            } catch (error) {
-                console.log(error)
+        } catch (error) {
+            if (error.response?.status === 400 || error.response?.status === 401 || error.response?.status === 403) {
+                clearAuthToken()
+            }
+            dispatch(setUserData(null))
+            console.log(error)
             }
         }
         fetchUser()

@@ -40,7 +40,7 @@ export const signUp = async (req, res) => {
 
     const safeUser = user.toObject();
     delete safeUser.password;
-    return res.status(201).json(safeUser);
+    return res.status(201).json({ user: safeUser, token });
   } catch (error) {
     return res.status(500).json({ message: `signup error ${error}` });
   }
@@ -72,7 +72,7 @@ export const login = async (req, res) => {
 
     const safeUser = user.toObject();
     delete safeUser.password;
-    return res.status(200).json(safeUser);
+    return res.status(200).json({ user: safeUser, token });
   } catch (error) {
     return res.status(500).json({ message: `login error ${error}` });
   }
